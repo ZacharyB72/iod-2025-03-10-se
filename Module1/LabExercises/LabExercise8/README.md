@@ -1,0 +1,1 @@
+As the user, select the dice you want to roll from the dropdown menu (d4, d6, d8, d10, d12, d20). Once they click "roll dice" using their seleted dice, the result will display a random number from the selected dice pool. 

@@ -1,0 +1,26 @@
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif, sans-serif;
+    text-align: center;
+    background-color: rgb(250, 248, 248);
+    padding: 20px;
+    background-image: url("https://th.bing.com/th/id/OIP.8tfDuidWeA0olowYiruB0AHaEv?rs=1&pid=ImgDetMain");
+  }
+  
+  h1 {
+    color: rgb(161, 87, 143);
+    font-size: 3em;
+  }
+  
+  button {
+    background-color: rgb(189, 192, 160);
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  
+  button:hover {
+    background-color: rgb(175, 95, 48);
+  }
