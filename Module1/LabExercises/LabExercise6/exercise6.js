@@ -12,7 +12,6 @@ let book = {
   console.log(book.pages); // 823
   console.log(book);
   book.description =
-    "The plot centers on a deadly pandemic of weaponized influenza and its aftermath, in which some of the few surviving humans gather into factions that are each led by a personification of either good or evil and seem fated to clash with each other";
-  console.log(book.description);
+    "The stand takes its time fleshing out its world and characters before riddling everybody with a terrible virus that forces characters to change their lives forever"
   let bookObject = ["Pages", "Plot", "Characters", "Setting", "Theme"];
   console.log(bookObject);
