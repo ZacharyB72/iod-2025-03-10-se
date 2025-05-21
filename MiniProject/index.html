@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E33 Loadout Creator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Select Items (Max 10):</h2>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('burn')">Burns</button>
+      <button class="tab-btn" onclick="switchTab('solo')">Solo</button>
+      <button class="tab-btn" onclick="switchTab('immun')">Immunity</button>
+      <button class="tab-btn" onclick="switchTab('cheats')">Cheats</button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="burn">
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Dbl Burn"> Dbl Burn</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Healing Burn"> Healing Burn</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Breaking Burn"> Breaking Burn</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Burn Affinity"> Burn Affinity</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Burning Death"> Burning Death</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Burning Mark"> Burning Mark</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Burning Shots"> Burning Shots</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Critical Burn"> Critical Burn</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Energizing Burn"> Energizing Burn</label>
+    </div>
+
+    <div class="tab-content" id="solo">
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Solo Fighter"> Solo Fighter</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Accelerating Last Stand"> Accelerating Last Stand</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Empowering Last Stand"> Empowering Last Stand</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Critical Last Stand"> Critical Last Stand</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Protecting Last Stand"> Protecting Last Stand</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Rushing Last Stand"> Rushing Last Stand</label>
+    </div>
+
+    <div class="tab-content" id="immun">
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Anti-Blight"> Anti-Blight</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Anti-Charm"> Anti-Charm</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Anti-Freeze"> Anti-Freeze</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Anti-Stun"> Anti-Stun</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Anti-Burn"> Anti-Burn</label> <!-- Had to use a different naming convention since aBurn was taken-->
+    </div>
+
+    <div class="tab-content" id="cheats" style="display: none;">
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Cheater"> Cheater</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Revive Paradox"> Revive Paradox</label>
+      <label class="checkbox-container"><input type="checkbox" name="items" value="Quick Break"> Quick Break</label>
+    </div>
+
+    <div class="error-message" id="error-message"></div>
+    <button onclick="saveSelections()">Save New Loadout</button>
+
+  </div>
+
+  <!-- Middle: Display Luminas -->
+  <div class="middle-content">
+    <h2>Current List</h2>
+    <div class="main-content-box" id="selected-items">
+      <em>No items selected.</em>
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="right-column">
+    <h3>Load Saved List:</h3>
+    <select id="savedLists" onchange="loadSelectedList()">
+      <option value="">-- Select Loadout --</option>
+    </select>
+  </div>
+
+  
+  <script>
+    const max = 10;
+    const checkboxes = document.querySelectorAll('input[name="items"]');
+    const errorDiv = document.getElementById('error-message');
+    const selectedBox = document.getElementById('selected-items');
+    const savedListsSelect = document.getElementById('savedLists');
+
+    window.onload = () => {
+      loadSavedListsDropdown();
+    };
+
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        const selectedCount = document.querySelectorAll('input[name="items"]:checked').length;
+        if (selectedCount > max) {
+          checkbox.checked = false;
+          errorDiv.textContent = `You can only select up to ${MAX_SELECTION} items.`;
+        } else {
+          errorDiv.textContent = '';
+          updateSelectedItems();
+        }
+      });
+    });
+
+    function updateSelectedItems(listName = null) {
+      const selected = Array.from(document.querySelectorAll('input[name="items"]:checked'))
+        .map(checkbox => checkbox.value);
+
+      if (selected.length > 0) {
+        selectedBox.innerHTML = `
+          ${listName ? `<h3>${listName}</h3>` : ''}
+          <ul>${selected.map(item => <li>${item}</li>).join('')}</ul>
+        `;
+      } else {
+        selectedBox.innerHTML = '<em>No items selected.</em>';
+      }
+    }
+
+    function saveSelections() {
+      const selected = Array.from(document.querySelectorAll('input[name="items"]:checked'))
+        .map(checkbox => checkbox.value);
+
+      if (selected.length === 0) {
+        alert("You must select at least one item before saving.");
+        return;
+      }
+
+      const listName = prompt("Enter loadout name:");
+      if (!listName || listName.trim() === "") {
+        alert("Loadout not saved. Name is required.");
+        return;
+      }
+
+      localStorage.setItem("namedLists", JSON.stringify(allLists));
+      loadSavedListsDropdown();
+      updateSelectedItems(listName);
+      alert(`List "${listName}" saved!`);
+    }
+
+    function loadSavedListsDropdown() {
+      const allLists = JSON.parse(localStorage.getItem("namedLists") || "{}");
+      savedListsSelect.innerHTML = `<option value="">-- Select a list --</option>`;
+      for (const name in allLists) {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        savedListsSelect.appendChild(option);
+      }
+    }
+
+    function loadSelectedList() {
+      const selectedListName = savedListsSelect.value;
+      if (!selectedListName) return;
+
+      const allLists = JSON.parse(localStorage.getItem("namedLists") || "{}");
+      const selectedItems = allLists[selectedListName] || [];
+
+      checkboxes.forEach(cb => cb.checked = false);
+
+      selectedItems.slice(0, MAX_SELECTION).forEach(value => {
+        const checkbox = document.querySelector(`input[name="items"][value="${value}"]`);
+        if (checkbox) checkbox.checked = true;
+      });
+
+      updateSelectedItems(selectedListName);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+      });
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(tabId).style.display = 'flex';
+      document.querySelector(`.tab-btn[onclick*="${tabId}"]`).classList.add('active');
+    }
+  </script>
+
+</body>
+</html>
